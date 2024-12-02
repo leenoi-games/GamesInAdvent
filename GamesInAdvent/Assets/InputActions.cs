@@ -22,9 +22,63 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     {
         asset = InputActionAsset.FromJson(@"{
     ""name"": ""InputActions"",
-    ""maps"": [],
+    ""maps"": [
+        {
+            ""name"": ""BrickBreaker"",
+            ""id"": ""b0a40f98-bd36-428d-b437-b7104deb3332"",
+            ""actions"": [
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""Button"",
+                    ""id"": ""4bf9b7fc-1cbf-47b1-930e-fd1189bdd125"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""AD"",
+                    ""id"": ""197b66b5-8fed-4858-ae41-14a59a8da499"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""35e3356c-304d-4d6f-b62d-20cf58a97c38"",
+                    ""path"": ""<Keyboard>/#(A)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""f8899b5a-bb02-4321-8fa0-2163ac73c74f"",
+                    ""path"": ""<Keyboard>/#(D)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                }
+            ]
+        }
+    ],
     ""controlSchemes"": []
 }");
+        // BrickBreaker
+        m_BrickBreaker = asset.FindActionMap("BrickBreaker", throwIfNotFound: true);
+        m_BrickBreaker_Move = m_BrickBreaker.FindAction("Move", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -81,5 +135,55 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     public int FindBinding(InputBinding bindingMask, out InputAction action)
     {
         return asset.FindBinding(bindingMask, out action);
+    }
+
+    // BrickBreaker
+    private readonly InputActionMap m_BrickBreaker;
+    private List<IBrickBreakerActions> m_BrickBreakerActionsCallbackInterfaces = new List<IBrickBreakerActions>();
+    private readonly InputAction m_BrickBreaker_Move;
+    public struct BrickBreakerActions
+    {
+        private @InputActions m_Wrapper;
+        public BrickBreakerActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Move => m_Wrapper.m_BrickBreaker_Move;
+        public InputActionMap Get() { return m_Wrapper.m_BrickBreaker; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(BrickBreakerActions set) { return set.Get(); }
+        public void AddCallbacks(IBrickBreakerActions instance)
+        {
+            if (instance == null || m_Wrapper.m_BrickBreakerActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_BrickBreakerActionsCallbackInterfaces.Add(instance);
+            @Move.started += instance.OnMove;
+            @Move.performed += instance.OnMove;
+            @Move.canceled += instance.OnMove;
+        }
+
+        private void UnregisterCallbacks(IBrickBreakerActions instance)
+        {
+            @Move.started -= instance.OnMove;
+            @Move.performed -= instance.OnMove;
+            @Move.canceled -= instance.OnMove;
+        }
+
+        public void RemoveCallbacks(IBrickBreakerActions instance)
+        {
+            if (m_Wrapper.m_BrickBreakerActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IBrickBreakerActions instance)
+        {
+            foreach (var item in m_Wrapper.m_BrickBreakerActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_BrickBreakerActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public BrickBreakerActions @BrickBreaker => new BrickBreakerActions(this);
+    public interface IBrickBreakerActions
+    {
+        void OnMove(InputAction.CallbackContext context);
     }
 }

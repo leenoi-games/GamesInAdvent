@@ -1,1 +1,56 @@
-{}
+{
+    "name": "InputActions",
+    "maps": [
+        {
+            "name": "BrickBreaker",
+            "id": "b0a40f98-bd36-428d-b437-b7104deb3332",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Button",
+                    "id": "4bf9b7fc-1cbf-47b1-930e-fd1189bdd125",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "AD",
+                    "id": "197b66b5-8fed-4858-ae41-14a59a8da499",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "35e3356c-304d-4d6f-b62d-20cf58a97c38",
+                    "path": "<Keyboard>/#(A)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "f8899b5a-bb02-4321-8fa0-2163ac73c74f",
+                    "path": "<Keyboard>/#(D)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
