@@ -3,6 +3,7 @@ using UnityEngine.Events;
 
 namespace GamesInAdvent.Util
 {
+    [CreateAssetMenu(menuName= "Variable/Int")]
     public class IntVariable : ScriptableObject
     {
         [SerializeField] int value;

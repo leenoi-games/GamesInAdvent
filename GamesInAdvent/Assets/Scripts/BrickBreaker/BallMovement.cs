@@ -13,11 +13,6 @@ namespace GamesInAdvent.BrickBreaker
             m_rb = GetComponent<Rigidbody2D>();
             m_rb.velocity = new Vector2(m_speed, m_speed);
         }
-
-        private void OnCollisionEnter(Collision other) 
-        {
-            m_rb.velocity = new Vector2(m_rb.velocity.x, -m_rb.velocity.y);
-        }
     }
 }
 
