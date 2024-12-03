@@ -72,6 +72,34 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""FlappyBird"",
+            ""id"": ""4b1d9796-528d-4ad4-a470-387c1d4f5e4e"",
+            ""actions"": [
+                {
+                    ""name"": ""Jump"",
+                    ""type"": ""Button"",
+                    ""id"": ""fcfa3282-2215-4e13-ab76-9bfe4a6fbd0a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""ea485d32-b7b6-4548-82b1-8d0bc2905e74"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -79,6 +107,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         // BrickBreaker
         m_BrickBreaker = asset.FindActionMap("BrickBreaker", throwIfNotFound: true);
         m_BrickBreaker_Move = m_BrickBreaker.FindAction("Move", throwIfNotFound: true);
+        // FlappyBird
+        m_FlappyBird = asset.FindActionMap("FlappyBird", throwIfNotFound: true);
+        m_FlappyBird_Jump = m_FlappyBird.FindAction("Jump", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -182,8 +213,58 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         }
     }
     public BrickBreakerActions @BrickBreaker => new BrickBreakerActions(this);
+
+    // FlappyBird
+    private readonly InputActionMap m_FlappyBird;
+    private List<IFlappyBirdActions> m_FlappyBirdActionsCallbackInterfaces = new List<IFlappyBirdActions>();
+    private readonly InputAction m_FlappyBird_Jump;
+    public struct FlappyBirdActions
+    {
+        private @InputActions m_Wrapper;
+        public FlappyBirdActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Jump => m_Wrapper.m_FlappyBird_Jump;
+        public InputActionMap Get() { return m_Wrapper.m_FlappyBird; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(FlappyBirdActions set) { return set.Get(); }
+        public void AddCallbacks(IFlappyBirdActions instance)
+        {
+            if (instance == null || m_Wrapper.m_FlappyBirdActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_FlappyBirdActionsCallbackInterfaces.Add(instance);
+            @Jump.started += instance.OnJump;
+            @Jump.performed += instance.OnJump;
+            @Jump.canceled += instance.OnJump;
+        }
+
+        private void UnregisterCallbacks(IFlappyBirdActions instance)
+        {
+            @Jump.started -= instance.OnJump;
+            @Jump.performed -= instance.OnJump;
+            @Jump.canceled -= instance.OnJump;
+        }
+
+        public void RemoveCallbacks(IFlappyBirdActions instance)
+        {
+            if (m_Wrapper.m_FlappyBirdActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IFlappyBirdActions instance)
+        {
+            foreach (var item in m_Wrapper.m_FlappyBirdActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_FlappyBirdActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public FlappyBirdActions @FlappyBird => new FlappyBirdActions(this);
     public interface IBrickBreakerActions
     {
         void OnMove(InputAction.CallbackContext context);
+    }
+    public interface IFlappyBirdActions
+    {
+        void OnJump(InputAction.CallbackContext context);
     }
 }

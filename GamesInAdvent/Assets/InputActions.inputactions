@@ -50,6 +50,34 @@
                     "isPartOfComposite": true
                 }
             ]
+        },
+        {
+            "name": "FlappyBird",
+            "id": "4b1d9796-528d-4ad4-a470-387c1d4f5e4e",
+            "actions": [
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "fcfa3282-2215-4e13-ab76-9bfe4a6fbd0a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "ea485d32-b7b6-4548-82b1-8d0bc2905e74",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
