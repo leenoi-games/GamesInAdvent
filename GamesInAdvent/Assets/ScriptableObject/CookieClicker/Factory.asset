@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c34619ae857684c7a84f08f9024724bd, type: 3}
   m_Name: Factory
   m_EditorClassIdentifier: 
-  m_cost: 4c040000c9040000
-  m_cookiesPerSecond: 10
+  m_cost: 10270000e02e0000983a000068420000
+  m_cookiesPerSecond: 55
