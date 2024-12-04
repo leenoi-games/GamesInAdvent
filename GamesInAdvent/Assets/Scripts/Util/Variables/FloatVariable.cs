@@ -3,21 +3,21 @@ using UnityEngine.Events;
 
 namespace GamesInAdvent.Util
 {
-    [CreateAssetMenu(menuName= "Variable/Int")]
-    public class IntVariable : ScriptableObject
+    [CreateAssetMenu(menuName= "Variable/Float")]
+    public class FloatVariable : ScriptableObject
     {
-        [SerializeField] int value;
-        [SerializeField] int defaultValue = 0;
-        public class VariableEvent : UnityEvent {}
+        [SerializeField] float value;
+        [SerializeField] float defaultValue = 0;
+        /*public class VariableEvent : UnityEvent {}
         private VariableEvent m_OnValueChanged = new VariableEvent();
         
         public VariableEvent onValueChanged
         {
             get { return m_OnValueChanged; }
             set { m_OnValueChanged = value; }
-        }
+        }*/
 
-        public IntVariable(int i)
+        public FloatVariable(float i)
         {
             value = i;
         }
@@ -25,24 +25,19 @@ namespace GamesInAdvent.Util
         //public static IntVariable operator +(IntVariable a, int b) => a.SetValue(a.value + b);
         //public static IntVariable operator +=(IntVariable a, int b) => new IntVariable(a.GetValue() + b);
 
-        public void SetValue(int f)
+        public void SetValue(float f)
         {
             value = f;
-            m_OnValueChanged.Invoke();
+            //m_OnValueChanged.Invoke();
         }
 
-        public int GetValue()
+        public float GetValue()
         {
             return this.value;
         }
         public void SetDefault()
         {
             value = defaultValue;
-        }
-
-        public void Increment(int i)
-        {
-            SetValue(i + value);
         }
 
         private void OnEnable() {
