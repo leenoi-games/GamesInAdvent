@@ -2,32 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName= "Cookieclicker/Building")]
-public class Building : ScriptableObject
+namespace GamesInAdvent.CookieClicker
 {
-    [SerializeField] private List<int> m_cost;
-    [SerializeField] private float m_cookiesPerSecond;
-    private int m_currentBuildingCostIdx;
-
-    public float Cps {get => m_cookiesPerSecond;}
-
-    public void ResetBuilding()
+    [CreateAssetMenu(menuName= "Cookieclicker/Building")]
+    public class Building : ScriptableObject
     {
-        m_currentBuildingCostIdx = 0;
-    }
+        [SerializeField] private List<int> m_cost;
+        [SerializeField] private float m_cookiesPerSecond;
+        private int m_currentBuildingCostIdx;
 
-    public int GetCurrentCost()
-    {
-        if(m_currentBuildingCostIdx < m_cost.Count)
+        public float Cps {get => m_cookiesPerSecond;}
+
+        public void ResetBuilding()
         {
-            return m_cost[m_currentBuildingCostIdx];
+            m_currentBuildingCostIdx = 0;
         }
-        else return m_currentBuildingCostIdx * m_cost[m_cost.Count-1];
-    }
 
-    public float Build()
-    {
-        m_currentBuildingCostIdx++;
-        return m_cookiesPerSecond;
+        public int GetCurrentCost()
+        {
+            if(m_currentBuildingCostIdx < m_cost.Count)
+            {
+                return m_cost[m_currentBuildingCostIdx];
+            }
+            else return m_currentBuildingCostIdx * m_cost[m_cost.Count-1];
+        }
+
+        public float Build()
+        {
+            m_currentBuildingCostIdx++;
+            return m_cookiesPerSecond;
+        }
     }
 }

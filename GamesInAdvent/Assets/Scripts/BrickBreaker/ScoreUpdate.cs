@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using GamesInAdvent.Util;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace GamesInAdvent.BrickBreaker
 {

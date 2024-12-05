@@ -100,6 +100,76 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""DoodleJump"",
+            ""id"": ""97c36745-e316-4475-addd-4f5b98fae2be"",
+            ""actions"": [
+                {
+                    ""name"": ""Shoot"",
+                    ""type"": ""Button"",
+                    ""id"": ""18a7ce36-8cf3-43f9-acab-e7eac843b033"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""be40162f-a8d1-47d3-b59c-3ceddd3404d0"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""49483bce-6327-428d-bc90-ba7a53429344"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""549edf34-9e7c-45cf-b159-78c2b807ca75"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""f73ccadf-93f3-49c2-bc61-6ab4e435ff66"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""0f401190-ff9b-43f5-9afc-8699d7dfb5d3"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -110,6 +180,10 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         // FlappyBird
         m_FlappyBird = asset.FindActionMap("FlappyBird", throwIfNotFound: true);
         m_FlappyBird_Jump = m_FlappyBird.FindAction("Jump", throwIfNotFound: true);
+        // DoodleJump
+        m_DoodleJump = asset.FindActionMap("DoodleJump", throwIfNotFound: true);
+        m_DoodleJump_Shoot = m_DoodleJump.FindAction("Shoot", throwIfNotFound: true);
+        m_DoodleJump_Move = m_DoodleJump.FindAction("Move", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -259,6 +333,60 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         }
     }
     public FlappyBirdActions @FlappyBird => new FlappyBirdActions(this);
+
+    // DoodleJump
+    private readonly InputActionMap m_DoodleJump;
+    private List<IDoodleJumpActions> m_DoodleJumpActionsCallbackInterfaces = new List<IDoodleJumpActions>();
+    private readonly InputAction m_DoodleJump_Shoot;
+    private readonly InputAction m_DoodleJump_Move;
+    public struct DoodleJumpActions
+    {
+        private @InputActions m_Wrapper;
+        public DoodleJumpActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Shoot => m_Wrapper.m_DoodleJump_Shoot;
+        public InputAction @Move => m_Wrapper.m_DoodleJump_Move;
+        public InputActionMap Get() { return m_Wrapper.m_DoodleJump; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(DoodleJumpActions set) { return set.Get(); }
+        public void AddCallbacks(IDoodleJumpActions instance)
+        {
+            if (instance == null || m_Wrapper.m_DoodleJumpActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_DoodleJumpActionsCallbackInterfaces.Add(instance);
+            @Shoot.started += instance.OnShoot;
+            @Shoot.performed += instance.OnShoot;
+            @Shoot.canceled += instance.OnShoot;
+            @Move.started += instance.OnMove;
+            @Move.performed += instance.OnMove;
+            @Move.canceled += instance.OnMove;
+        }
+
+        private void UnregisterCallbacks(IDoodleJumpActions instance)
+        {
+            @Shoot.started -= instance.OnShoot;
+            @Shoot.performed -= instance.OnShoot;
+            @Shoot.canceled -= instance.OnShoot;
+            @Move.started -= instance.OnMove;
+            @Move.performed -= instance.OnMove;
+            @Move.canceled -= instance.OnMove;
+        }
+
+        public void RemoveCallbacks(IDoodleJumpActions instance)
+        {
+            if (m_Wrapper.m_DoodleJumpActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IDoodleJumpActions instance)
+        {
+            foreach (var item in m_Wrapper.m_DoodleJumpActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_DoodleJumpActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public DoodleJumpActions @DoodleJump => new DoodleJumpActions(this);
     public interface IBrickBreakerActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -266,5 +394,10 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     public interface IFlappyBirdActions
     {
         void OnJump(InputAction.CallbackContext context);
+    }
+    public interface IDoodleJumpActions
+    {
+        void OnShoot(InputAction.CallbackContext context);
+        void OnMove(InputAction.CallbackContext context);
     }
 }
