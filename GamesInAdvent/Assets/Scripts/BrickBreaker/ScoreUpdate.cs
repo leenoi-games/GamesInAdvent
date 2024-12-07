@@ -16,7 +16,10 @@ namespace GamesInAdvent.BrickBreaker
         {
             if(value != null)
             {
-                value.onValueChanged.AddListener(delegate{OnValueChanged();});
+                value.onValueChanged.AddListener(delegate
+                {
+                    OnValueChanged();
+                });
             }
             text = GetComponent<TextMeshProUGUI>();
             OnValueChanged();

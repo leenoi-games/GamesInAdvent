@@ -170,6 +170,78 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""Frogger"",
+            ""id"": ""53c1dec0-4283-4923-acf2-cb2f2bbde5dc"",
+            ""actions"": [
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""Value"",
+                    ""id"": ""a54dbbbf-92b9-4846-826f-d09f48f70b93"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""00378cea-77ef-4040-ba8b-00b1cfb4b95e"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""8af3d8d0-f480-4333-a958-488303234100"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""07aed888-37e4-4a69-b699-2f397037c7af"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""6e158eeb-4357-4858-a666-909a25e13fe5"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""eb42ff97-df5a-46c5-9af2-da93476c122c"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -184,6 +256,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_DoodleJump = asset.FindActionMap("DoodleJump", throwIfNotFound: true);
         m_DoodleJump_Shoot = m_DoodleJump.FindAction("Shoot", throwIfNotFound: true);
         m_DoodleJump_Move = m_DoodleJump.FindAction("Move", throwIfNotFound: true);
+        // Frogger
+        m_Frogger = asset.FindActionMap("Frogger", throwIfNotFound: true);
+        m_Frogger_Move = m_Frogger.FindAction("Move", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -387,6 +462,52 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         }
     }
     public DoodleJumpActions @DoodleJump => new DoodleJumpActions(this);
+
+    // Frogger
+    private readonly InputActionMap m_Frogger;
+    private List<IFroggerActions> m_FroggerActionsCallbackInterfaces = new List<IFroggerActions>();
+    private readonly InputAction m_Frogger_Move;
+    public struct FroggerActions
+    {
+        private @InputActions m_Wrapper;
+        public FroggerActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Move => m_Wrapper.m_Frogger_Move;
+        public InputActionMap Get() { return m_Wrapper.m_Frogger; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(FroggerActions set) { return set.Get(); }
+        public void AddCallbacks(IFroggerActions instance)
+        {
+            if (instance == null || m_Wrapper.m_FroggerActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_FroggerActionsCallbackInterfaces.Add(instance);
+            @Move.started += instance.OnMove;
+            @Move.performed += instance.OnMove;
+            @Move.canceled += instance.OnMove;
+        }
+
+        private void UnregisterCallbacks(IFroggerActions instance)
+        {
+            @Move.started -= instance.OnMove;
+            @Move.performed -= instance.OnMove;
+            @Move.canceled -= instance.OnMove;
+        }
+
+        public void RemoveCallbacks(IFroggerActions instance)
+        {
+            if (m_Wrapper.m_FroggerActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IFroggerActions instance)
+        {
+            foreach (var item in m_Wrapper.m_FroggerActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_FroggerActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public FroggerActions @Frogger => new FroggerActions(this);
     public interface IBrickBreakerActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -398,6 +519,10 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     public interface IDoodleJumpActions
     {
         void OnShoot(InputAction.CallbackContext context);
+        void OnMove(InputAction.CallbackContext context);
+    }
+    public interface IFroggerActions
+    {
         void OnMove(InputAction.CallbackContext context);
     }
 }
