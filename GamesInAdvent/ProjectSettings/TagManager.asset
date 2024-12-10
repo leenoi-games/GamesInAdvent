@@ -8,6 +8,8 @@ TagManager:
   - Platform
   - EndOfLevel
   - Car
+  - Obstacle
+  - Coin
   layers:
   - Default
   - TransparentFX

@@ -1,53 +1,56 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-//namespace GamesInAdvent.Util
-//{
-[CreateAssetMenu(menuName= "Variable/Int")]
-public class IntVariable : ScriptableObject
+namespace GamesInAdvent.Util
 {
-    [SerializeField] int value;
-    [SerializeField] int defaultValue = 0;
-    public class VariableEvent : UnityEvent {}
-    private VariableEvent OnValueChanged = new VariableEvent();
-    
-    public VariableEvent onValueChanged
+    [CreateAssetMenu(menuName= "Variable/Int")]
+    public class IntVariable : ScriptableObject
     {
-        get { return OnValueChanged; }
-        set { OnValueChanged = value; }
-    }
+        [SerializeField] int value;
+        [SerializeField] int defaultValue = 0;
+        private void OnEnable() 
+        {
+            this.hideFlags = HideFlags.DontUnloadUnusedAsset;
+            value = defaultValue;
+        }
 
-    public IntVariable(int i)
-    {
-        value = i;
-    }
+        public class VariableEvent : UnityEvent {}
+        private VariableEvent m_onValueChanged = new();
+        
+        public VariableEvent OnValueChanged
+        {
+            get { return m_onValueChanged; }
+            set { m_onValueChanged = value; }
+        }
 
-    //public static IntVariable operator +(IntVariable a, int b) => a.SetValue(a.value + b);
-    //public static IntVariable operator +=(IntVariable a, int b) => new IntVariable(a.GetValue() + b);
+        public IntVariable(int i)
+        {
+            value = i;
+        }
 
-    public void SetValue(int f)
-    {
-        value = f;
-        OnValueChanged.Invoke();
-    }
+        //public static IntVariable operator +(IntVariable a, int b) => a.SetValue(a.value + b);
+        //public static IntVariable operator +=(IntVariable a, int b) => new IntVariable(a.GetValue() + b);
 
-    public int GetValue()
-    {
-        return this.value;
-    }
-    public void SetDefault()
-    {
-        value = defaultValue;
-    }
+        public void SetValue(int f)
+        {
+            value = f;
+            //m_onValueChanged.Invoke();
+        }
 
-    public void Increment(int i)
-    {
-        SetValue(i + value);
-    }
+        public int GetValue()
+        {
+            return this.value;
+        }
+        public void SetDefault()
+        {
+            value = defaultValue;
+        }
 
-    private void OnEnable() {
-        this.hideFlags = HideFlags.DontUnloadUnusedAsset;
-        value = defaultValue;
+        public void Increment(int i)
+        {
+            SetValue(i + value);
+        }
+
+        
     }
 }
-//}

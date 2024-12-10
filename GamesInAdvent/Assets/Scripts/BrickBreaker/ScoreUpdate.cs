@@ -16,7 +16,7 @@ namespace GamesInAdvent.BrickBreaker
         {
             if(value != null)
             {
-                value.onValueChanged.AddListener(delegate
+                value.OnValueChanged.AddListener(delegate
                 {
                     OnValueChanged();
                 });

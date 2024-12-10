@@ -1493,7 +1493,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_gameManager: {fileID: 441134081}
-  lives: 0
+  lives: 1
 --- !u!1 &1283539775
 GameObject:
   m_ObjectHideFlags: 0

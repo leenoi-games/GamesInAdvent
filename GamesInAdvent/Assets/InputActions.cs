@@ -242,6 +242,106 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""Sneak"",
+            ""id"": ""148eee4e-0423-4500-b4e0-ff3e4a311c08"",
+            ""actions"": [
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""Value"",
+                    ""id"": ""43cc4ea4-8003-4ead-a29b-8249a531d516"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""05fb7aa9-2884-465e-8b9f-d408c1dcebda"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""abf7707b-9f87-4929-8723-f5a3203a9bf5"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""38ce6971-9a0d-4eb2-ae93-40917e3734c1"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""5b29cf56-4815-4242-a334-90d581f5b837"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""88aebae0-57f8-4bc3-9908-07acbe3bbaba"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                }
+            ]
+        },
+        {
+            ""name"": ""Jetpack"",
+            ""id"": ""13e39266-17fe-47a4-af45-f92af2810298"",
+            ""actions"": [
+                {
+                    ""name"": ""Fly"",
+                    ""type"": ""Value"",
+                    ""id"": ""9cb43c2d-0d07-4c4b-9431-1cb82789ffca"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Hold(duration=1.401298E-45,pressPoint=1.401298E-45)"",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""5a1c3231-49b8-4c07-9ec9-09ddfa5f2b2a"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Fly"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -259,6 +359,12 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         // Frogger
         m_Frogger = asset.FindActionMap("Frogger", throwIfNotFound: true);
         m_Frogger_Move = m_Frogger.FindAction("Move", throwIfNotFound: true);
+        // Sneak
+        m_Sneak = asset.FindActionMap("Sneak", throwIfNotFound: true);
+        m_Sneak_Move = m_Sneak.FindAction("Move", throwIfNotFound: true);
+        // Jetpack
+        m_Jetpack = asset.FindActionMap("Jetpack", throwIfNotFound: true);
+        m_Jetpack_Fly = m_Jetpack.FindAction("Fly", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -508,6 +614,98 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         }
     }
     public FroggerActions @Frogger => new FroggerActions(this);
+
+    // Sneak
+    private readonly InputActionMap m_Sneak;
+    private List<ISneakActions> m_SneakActionsCallbackInterfaces = new List<ISneakActions>();
+    private readonly InputAction m_Sneak_Move;
+    public struct SneakActions
+    {
+        private @InputActions m_Wrapper;
+        public SneakActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Move => m_Wrapper.m_Sneak_Move;
+        public InputActionMap Get() { return m_Wrapper.m_Sneak; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(SneakActions set) { return set.Get(); }
+        public void AddCallbacks(ISneakActions instance)
+        {
+            if (instance == null || m_Wrapper.m_SneakActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_SneakActionsCallbackInterfaces.Add(instance);
+            @Move.started += instance.OnMove;
+            @Move.performed += instance.OnMove;
+            @Move.canceled += instance.OnMove;
+        }
+
+        private void UnregisterCallbacks(ISneakActions instance)
+        {
+            @Move.started -= instance.OnMove;
+            @Move.performed -= instance.OnMove;
+            @Move.canceled -= instance.OnMove;
+        }
+
+        public void RemoveCallbacks(ISneakActions instance)
+        {
+            if (m_Wrapper.m_SneakActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(ISneakActions instance)
+        {
+            foreach (var item in m_Wrapper.m_SneakActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_SneakActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public SneakActions @Sneak => new SneakActions(this);
+
+    // Jetpack
+    private readonly InputActionMap m_Jetpack;
+    private List<IJetpackActions> m_JetpackActionsCallbackInterfaces = new List<IJetpackActions>();
+    private readonly InputAction m_Jetpack_Fly;
+    public struct JetpackActions
+    {
+        private @InputActions m_Wrapper;
+        public JetpackActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Fly => m_Wrapper.m_Jetpack_Fly;
+        public InputActionMap Get() { return m_Wrapper.m_Jetpack; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(JetpackActions set) { return set.Get(); }
+        public void AddCallbacks(IJetpackActions instance)
+        {
+            if (instance == null || m_Wrapper.m_JetpackActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_JetpackActionsCallbackInterfaces.Add(instance);
+            @Fly.started += instance.OnFly;
+            @Fly.performed += instance.OnFly;
+            @Fly.canceled += instance.OnFly;
+        }
+
+        private void UnregisterCallbacks(IJetpackActions instance)
+        {
+            @Fly.started -= instance.OnFly;
+            @Fly.performed -= instance.OnFly;
+            @Fly.canceled -= instance.OnFly;
+        }
+
+        public void RemoveCallbacks(IJetpackActions instance)
+        {
+            if (m_Wrapper.m_JetpackActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IJetpackActions instance)
+        {
+            foreach (var item in m_Wrapper.m_JetpackActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_JetpackActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public JetpackActions @Jetpack => new JetpackActions(this);
     public interface IBrickBreakerActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -524,5 +722,13 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     public interface IFroggerActions
     {
         void OnMove(InputAction.CallbackContext context);
+    }
+    public interface ISneakActions
+    {
+        void OnMove(InputAction.CallbackContext context);
+    }
+    public interface IJetpackActions
+    {
+        void OnFly(InputAction.CallbackContext context);
     }
 }
